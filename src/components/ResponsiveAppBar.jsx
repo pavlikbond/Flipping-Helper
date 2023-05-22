@@ -14,7 +14,7 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
-const pages = ["events", "about"];
+const pages = ["home", "pricing", "about"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
@@ -102,7 +102,7 @@ function ResponsiveAppBar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Link key={page} href={`/${page}`} className="no-underline">
+              <Link key={page} href={`/${page === "home" ? "" : page}`} className="no-underline">
                 <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: "white", display: "block" }}>
                   {page}
                 </Button>
