@@ -9,7 +9,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import CloseIcon from "@mui/icons-material/Close";
 
-export const HomePage = ({ data, items }) => {
+export const Tracker = ({ data, items }) => {
   let [trackedItems, setTrackedItems] = useState(data.trackedItems);
   let [waiting, setWaiting] = useState(false);
   let [alerts, setAlerts] = useState([]);
