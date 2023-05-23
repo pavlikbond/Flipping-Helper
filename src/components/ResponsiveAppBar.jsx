@@ -7,17 +7,18 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
+
 const pages = ["home", "pricing", "about"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
+  const { isLoaded, userId, sessionId, getToken } = useAuth();
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -109,6 +110,20 @@ function ResponsiveAppBar() {
               </Link>
             ))}
           </Box>
+          {isLoaded && !userId && (
+            <div className="flex gap-2">
+              <Link href="/sign-in" passHref>
+                <Button variant="outlined" color="secondary">
+                  Login
+                </Button>
+              </Link>
+              <Link href="/sign-up" passHref>
+                <Button variant="contained" color="secondary">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          )}
           <UserButton afterSignOutUrl="/" />
         </Toolbar>
       </Container>

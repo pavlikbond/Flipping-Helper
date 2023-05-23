@@ -23,17 +23,17 @@ export async function getServerSideProps() {
   //   },
   //   tier2: {
   //     name: "Basic",
-  //     shortDescription: "Perfect for casual traders",
-  //     price: "$2/month",
+  //     shortDescription: "Great for casual players",
+  //     price: "2",
   //     action: "Get started",
   //     features: ["Track 20 items", "Email customization"],
   //   },
   //   tier3: {
   //     name: "Pro",
-  //     shortDescription: "Perfect for power traders",
-  //     price: "$10/month",
+  //     shortDescription: "Ideal for power traders",
+  //     price: "5",
   //     action: "Get started",
-  //     features: ["Track unlimited items", "Additional customizations"],
+  //     features: ["Track unlimited items", "Additional customizations", "Notification timers"],
   //   },
   // };
 

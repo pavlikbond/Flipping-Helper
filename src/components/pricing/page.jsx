@@ -23,7 +23,7 @@ const PricingPage = ({ pricing }) => {
 const PriceCard = ({ data }) => {
   return (
     <Card variant="outlined" className="shadow-lg px-5 py-6 relative flex flex-col gap-4 w-[280px]">
-      {data.name === "Basic" && <div className="absolute top-0 left-0 w-full h-2 bg-blue-500"></div>}
+      {data.name === "Basic" && <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>}
       {data.name === "Basic" && (
         <div className="absolute top-4 right-2 w-fit p-1 bg-blue-100 text-blue-500 rounded-sm shadow-sm text-xs">
           Popular
@@ -33,7 +33,17 @@ const PriceCard = ({ data }) => {
         <h3 className="text-slate-600">{data.name}</h3>
         <h5 className="text-slate-400 font-normal">{data.shortDescription}</h5>
       </div>
-      <h2 className="text-3xl font-light">{data.price}</h2>
+      <h2 className="text-5xl font-light text-slate-500">
+        {data.price === "Free" ? (
+          <span className="">Free</span>
+        ) : (
+          <>
+            <span className="text-5xl">$</span>
+            <span className="font-medium ml-1 mr-2 text-5xl text-slate-600">{data.price}</span>
+            <span className="text-base">per month</span>
+          </>
+        )}
+      </h2>
       <Link href="/sign-up" passHref className="w-full">
         <Button className="w-full" variant="contained" color="secondary">
           {data.action}
