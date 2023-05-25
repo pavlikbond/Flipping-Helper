@@ -17,13 +17,15 @@ const UserSchema = new Schema({
   clerkId: String,
   email: String,
   trackedItems: Array,
+  stripeId: String,
+  plan: String,
 });
 
 const PricingSchema = new Schema({
   name: String,
-  tier1: { name: String, shortDescription: String, price: String, action: String, features: Array },
-  tier2: { name: String, shortDescription: String, price: String, action: String, features: Array },
-  tier3: { name: String, shortDescription: String, price: String, action: String, features: Array },
+  tier1: { name: String, shortDescription: String, price: String, action: String, priceId: String, features: Array },
+  tier2: { name: String, shortDescription: String, price: String, action: String, priceId: String, features: Array },
+  tier3: { name: String, shortDescription: String, price: String, action: String, priceId: String, features: Array },
 });
 
 export const item = models.item || model("item", ItemSchema);
