@@ -17,6 +17,7 @@
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
+    "@stripe/stripe-js": "^1.53.0",
     "dotenv": "^16.0.3",
     "email-validator": "^2.0.4",
     "micro": "^10.0.1",
@@ -25,6 +26,7 @@
     "prop-types": "latest",
     "react": "latest",
     "react-dom": "latest",
+    "stripe": "^12.6.0",
     "svix": "^0.85.1"
   },
   "devDependencies": {

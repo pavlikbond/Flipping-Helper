@@ -51,6 +51,7 @@ function createUser(userData) {
     clerkId: userData.id,
     email: userData.email_addresses[0].email_address,
     trackedItems: [],
+    plan: "Free",
   });
   newUser
     .save()

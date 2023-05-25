@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -9,18 +9,21 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
+import TollIcon from "@mui/icons-material/Toll";
+import { useRouter } from "next/navigation";
+import { useUser } from "src/components/UserContext";
 
 const pages = ["home", "pricing", "about"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function ResponsiveAppBar() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const { push } = useRouter();
+  const { plan } = useUser();
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -37,13 +40,31 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const openPortal = () => {
+    fetch("/api/stripe/portal", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: userId,
+        returnURL: `${window.location}`,
+      }),
+    })
+      .then((res) => res.json())
+      .then((session) => {
+        // Redirect to Checkout
+        push(session.url);
+      });
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Link href="/" className="items-center mr-12 no-underline hidden md:flex">
-            <AdbIcon />
-            <p className="uppercase tracking-wider font-bold">LOGO</p>
+            <TollIcon className="mr-2" />
+            <p className="uppercase tracking-wider font-bold">FlipScape Pro</p>
           </Link>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -82,7 +103,7 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <TollIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} className="mr-2" />
           <Typography
             variant="h5"
             noWrap
@@ -99,7 +120,7 @@ function ResponsiveAppBar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            FlipScape Pro
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
@@ -124,7 +145,16 @@ function ResponsiveAppBar() {
               </Link>
             </div>
           )}
-          <UserButton afterSignOutUrl="/" />
+          {isLoaded && userId && (
+            <div className="flex gap-2">
+              {(plan === "Pro" || plan === "Basic") && (
+                <Button variant="outlined" color="secondary" onClick={openPortal}>
+                  Manage Subscription
+                </Button>
+              )}
+              <UserButton afterSignOutUrl="/" />
+            </div>
+          )}
         </Toolbar>
       </Container>
     </AppBar>

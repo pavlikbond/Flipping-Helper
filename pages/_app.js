@@ -9,6 +9,7 @@ import createEmotionCache from "../src/createEmotionCache";
 import "../styles/globals.css";
 import MainLayout from "../src/components/main-layout";
 import { ClerkProvider } from "@clerk/nextjs";
+import { UserProvider } from "@/src/components/UserContext";
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache({
   key: "css",
@@ -16,7 +17,7 @@ const clientSideEmotionCache = createEmotionCache({
 });
 
 export default function MyApp(props) {
-  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const { Component, emotionCache = clientSideEmotionCache, pageProps, plan } = props;
 
   return (
     <CacheProvider value={emotionCache}>
@@ -27,9 +28,11 @@ export default function MyApp(props) {
         <ThemeProvider theme={theme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
-          <MainLayout>
-            <Component {...pageProps} />
-          </MainLayout>
+          <UserProvider>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </UserProvider>
         </ThemeProvider>
       </ClerkProvider>
     </CacheProvider>
