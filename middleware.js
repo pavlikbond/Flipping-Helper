@@ -4,6 +4,7 @@ export default authMiddleware({
   publicRoutes: [
     "/api/webhooks/user",
     "/api/webhooks/stripe",
+    "/api/notifier",
     "/",
     "/pricing",
     "/sign-in",
