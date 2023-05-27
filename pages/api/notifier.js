@@ -53,6 +53,7 @@ export default async (req, res) => {
       console.log("\nNo items to notify");
     }
   }
+  res.status(200).json({ message: "success" });
 };
 
 function notify(valueItems, email) {
