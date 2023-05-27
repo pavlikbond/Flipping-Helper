@@ -16,7 +16,7 @@ import TollIcon from "@mui/icons-material/Toll";
 import { useRouter } from "next/navigation";
 import { useUser } from "src/components/UserContext";
 
-const pages = ["home", "pricing", "about"];
+const pages = ["home", "pricing", "about", "tracker"];
 
 function ResponsiveAppBar() {
   const { isLoaded, userId, sessionId, getToken } = useAuth();
@@ -97,10 +97,37 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page} onClick={handleCloseNavMenu} className="min-w-[200px]">
+                  <Link href={`/${page === "home" ? "" : page}`} passHref>
+                    <Typography textAlign="center" className="uppercase font-semibold text-slate-500">
+                      {page}
+                    </Typography>
+                  </Link>
                 </MenuItem>
               ))}
+              {isLoaded && !userId && (
+                <MenuItem onClick={handleCloseNavMenu} className="min-w-[200px]">
+                  <div className="flex gap-2">
+                    <Link href="/sign-in" passHref className="flex-1">
+                      <Button variant="outlined" color="secondary" className="w-full">
+                        Login
+                      </Button>
+                    </Link>
+                    <Link href="/sign-up" passHref className="flex-1">
+                      <Button variant="contained" color="secondary" className="w-full">
+                        Sign Up
+                      </Button>
+                    </Link>
+                  </div>
+                </MenuItem>
+              )}
+              {sessionId && (plan === "Pro" || plan === "Basic") && (
+                <MenuItem onClick={handleCloseNavMenu} className="min-w-[200px]">
+                  <Button variant="outlined" color="secondary" onClick={openPortal}>
+                    Manage Subscription
+                  </Button>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
           <TollIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} className="mr-2" />
@@ -115,46 +142,54 @@ function ResponsiveAppBar() {
               flexGrow: 1,
               fontFamily: "monospace",
               fontWeight: 700,
-              letterSpacing: ".3rem",
+
               color: "inherit",
               textDecoration: "none",
             }}
           >
             FlipScape Pro
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Link key={page} href={`/${page === "home" ? "" : page}`} className="no-underline">
-                <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: "white", display: "block" }}>
-                  {page}
-                </Button>
-              </Link>
-            ))}
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} className="justify-between">
+            <div className="flex gap-1">
+              {pages.map((page) => {
+                if (!userId && page === "tracker") return null;
+                else {
+                  return (
+                    <Link key={page} href={`/${page === "home" ? "" : page}`}>
+                      <Button onClick={handleCloseNavMenu} sx={{ my: 2, color: "white", display: "block" }}>
+                        {page}
+                      </Button>
+                    </Link>
+                  );
+                }
+              })}
+            </div>
+            {isLoaded && userId && (
+              <div className="flex gap-2 items-center mr-4">
+                {sessionId && (plan === "Pro" || plan === "Basic") && (
+                  <Button variant="outlined" color="secondary" onClick={openPortal}>
+                    Manage Subscription
+                  </Button>
+                )}
+              </div>
+            )}
+            {isLoaded && !userId && (
+              <div className="flex gap-2 items-center">
+                <Link href="/sign-in" passHref>
+                  <Button variant="outlined" color="secondary">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/sign-up" passHref>
+                  <Button variant="contained" color="secondary">
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
           </Box>
-          {isLoaded && !userId && (
-            <div className="flex gap-2">
-              <Link href="/sign-in" passHref>
-                <Button variant="outlined" color="secondary">
-                  Login
-                </Button>
-              </Link>
-              <Link href="/sign-up" passHref>
-                <Button variant="contained" color="secondary">
-                  Sign Up
-                </Button>
-              </Link>
-            </div>
-          )}
-          {isLoaded && userId && (
-            <div className="flex gap-2">
-              {(plan === "Pro" || plan === "Basic") && (
-                <Button variant="outlined" color="secondary" onClick={openPortal}>
-                  Manage Subscription
-                </Button>
-              )}
-              <UserButton afterSignOutUrl="/" />
-            </div>
-          )}
+
+          <UserButton afterSignOutUrl="/" />
         </Toolbar>
       </Container>
     </AppBar>

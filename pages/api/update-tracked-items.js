@@ -1,5 +1,5 @@
 //import { connectMongo } from "../../utils/connectMongo.js";
-import { item, user } from "../../models/schemas.js";
+import { User } from "models/schemas.js";
 
 export default async (req, res) => {
   //await connectMongo();
@@ -8,8 +8,8 @@ export default async (req, res) => {
     case "PUT":
       try {
         const { userData } = req.body;
-        //get user object
-        const userObject = await user.findById(userData._id);
+        //get User object
+        const userObject = await User.findById(userData._id);
 
         let trackedItems = userData.trackedItems;
         for (let newItem of trackedItems) {
@@ -18,14 +18,15 @@ export default async (req, res) => {
             newItem.lastNotified = oldItem.lastNotified;
           }
         }
-        console.log(trackedItems);
-        const updatedUser = await user
-          .findByIdAndUpdate(userData._id, { trackedItems: userData.trackedItems })
-          .then((data) => {
-            return data;
+        const updatedUser = await User.findByIdAndUpdate(userData._id, { trackedItems: userData.trackedItems })
+          .then(function () {
+            console.log("Data inserted"); // Success
+          })
+          .catch(function (error) {
+            console.log(error); // Failure
           });
 
-        res.status(200).json({ success: true, data: updatedUser });
+        res.status(200).json({ success: true });
       } catch (error) {
         console.log(error);
         res.status(400).json({ success: false });

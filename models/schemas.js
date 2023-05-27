@@ -19,17 +19,53 @@ const UserSchema = new Schema({
   trackedItems: Array,
   stripeId: String,
   plan: String,
+  tracking: Boolean,
 });
 
 const PricingSchema = new Schema({
   name: String,
-  tier1: { name: String, shortDescription: String, price: String, action: String, priceId: String, features: Array },
-  tier2: { name: String, shortDescription: String, price: String, action: String, priceId: String, features: Array },
-  tier3: { name: String, shortDescription: String, price: String, action: String, priceId: String, features: Array },
+  tier1: {
+    name: String,
+    shortDescription: String,
+    price: String,
+    action: String,
+    priceId: String,
+    features: Array,
+    limit: Number,
+  },
+  tier2: {
+    name: String,
+    shortDescription: String,
+    price: String,
+    action: String,
+    priceId: String,
+    features: Array,
+    limit: Number,
+  },
+  tier3: {
+    name: String,
+    shortDescription: String,
+    price: String,
+    action: String,
+    priceId: String,
+    features: Array,
+    limit: Number,
+  },
 });
 
-export const item = models.item || model("item", ItemSchema);
-export const Item = models.Item || model("Item", ItemSchema);
-export const user = models.user || model("user", UserSchema);
-export const User = models.User || model("User", UserSchema);
-export const Pricing = models.Pricing || model("Pricing", PricingSchema);
+const NewPricingSchema = new Schema({
+  name: String,
+  shortDescription: String,
+  price: String,
+  action: String,
+  priceId: String,
+  features: Array,
+  limit: Number,
+});
+
+//export const item = models.item || model("item", ItemSchema);
+export const Item = models?.Item || model("Item", ItemSchema);
+//export const user = models.user || model("user", UserSchema);
+export const User = models?.User || model("User", UserSchema);
+export const Pricing = models?.Pricing || model("Pricing", PricingSchema);
+export const NewPricing = models?.NewPricing || model("NewPricing", NewPricingSchema);
