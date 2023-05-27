@@ -52,6 +52,7 @@ function createUser(userData) {
     email: userData.email_addresses[0].email_address,
     trackedItems: [],
     plan: "Free",
+    tracking: false,
   });
   newUser
     .save()

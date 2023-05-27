@@ -1,5 +1,5 @@
 import TextField from "@mui/material/TextField";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,9 +8,10 @@ import Divider from "@mui/material/Divider";
 import Autocomplete from "@mui/material/Autocomplete";
 import { createFilterOptions } from "@mui/material/Autocomplete";
 import CloseIcon from "@mui/icons-material/Close";
-
-export const Tracker = ({ data, items }) => {
-  let [trackedItems, setTrackedItems] = useState(data.trackedItems);
+import Trigger from "src/components/tracker/trigger";
+import { v4 as uuidv4 } from "uuid";
+export const Tracker = ({ mongoUser, items, limit }) => {
+  let [trackedItems, setTrackedItems] = useState(mongoUser.trackedItems);
   let [waiting, setWaiting] = useState(false);
   let [alerts, setAlerts] = useState([]);
   let [newItem, setNewItem] = useState();
@@ -19,20 +20,20 @@ export const Tracker = ({ data, items }) => {
   const onSave = () => {
     setWaiting(true);
     setAlerts([]);
-    data.trackedItems = trackedItems;
+    mongoUser.trackedItems = trackedItems;
     fetch("/api/update-tracked-items", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userData: data }),
+      body: JSON.stringify({ userData: mongoUser }),
     }).then((res) => {
       setWaiting(false);
       setChangesMade(false);
       if (res.status === 200) {
-        setAlerts([{ severity: "success", message: "Successfully updated tracked items" }]);
+        setAlerts([{ severity: "success", message: "Update Successful" }]);
       } else {
-        setAlerts([{ severity: "error", message: "Failed to update tracked items" }]);
+        setAlerts([{ severity: "error", message: "Update Failed" }]);
       }
       console.log(res);
     });
@@ -57,16 +58,14 @@ export const Tracker = ({ data, items }) => {
   });
 
   const removeItem = (index) => {
-    //remove by index
-    return () => {
-      setChangesMade(true);
-      setTrackedItems(trackedItems.filter((item, i) => i !== index));
-    };
+    setChangesMade(true);
+    setTrackedItems(trackedItems.filter((item, i) => i !== index));
   };
 
   return (
     <div className="flex flex-col ">
       <div className="flex flex-col gap-6 mb-8">
+        <Trigger />
         <div className="flex gap-4 h-[50px]">
           <Button className="w-24 flex gap-4" variant={changesMade ? "contained" : "outlined"} onClick={onSave}>
             {waiting && <CircularProgress size={24} />}
@@ -80,6 +79,7 @@ export const Tracker = ({ data, items }) => {
                 }}
                 key={index}
                 severity={alert.severity}
+                className="shadow-md"
               >
                 {alert.message}
               </Alert>
@@ -95,16 +95,24 @@ export const Tracker = ({ data, items }) => {
             options={items.map((item) => item.name) || []}
             sx={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="New Item" />}
+            disabled={trackedItems.length >= limit}
           />
-          <Button variant="outlined" onClick={addItem}>
+          <Button variant="outlined" onClick={addItem} disabled={trackedItems.length >= limit}>
             Add
           </Button>
         </div>
       </div>
       {trackedItems.map((item, index) => {
         return (
-          <div key={item.osrs_id}>
-            <ItemCard item={item} removeItem={removeItem(index)} setChangesMade={setChangesMade} />
+          <div key={uuidv4()}>
+            <ItemCard
+              item={item}
+              removeItem={() => {
+                removeItem(index);
+              }}
+              setChangesMade={setChangesMade}
+              index={index}
+            />
             <Divider />
           </div>
         );
@@ -113,7 +121,7 @@ export const Tracker = ({ data, items }) => {
   );
 };
 
-export const ItemCard = ({ item, removeItem, setChangesMade }) => {
+export const ItemCard = ({ item, removeItem, setChangesMade, index }) => {
   const [threshold, setThreshold] = useState(item.threshold || 2.5);
 
   const onUpdateThreshold = (e) => {
@@ -131,7 +139,9 @@ export const ItemCard = ({ item, removeItem, setChangesMade }) => {
 
   return (
     <div key={item.osrs_id} className="flex gap-1 md:gap-4 w-full my-3 justify-between">
-      <h2 className="w-[180px] md:w-1/3 font-semibold text-lg text-slate-500">{item.name}</h2>
+      <h2 className="w-[180px] md:w-1/3 font-semibold text-sm md:text-lg text-slate-500">
+        <span className="text-slate-400 font-normal">{index + 1}.</span> {item.name}
+      </h2>
       <TextField
         size="small"
         label="Threshold"
@@ -140,7 +150,7 @@ export const ItemCard = ({ item, removeItem, setChangesMade }) => {
         value={threshold}
         inputProps={{ maxLength: 8 }}
         InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-        className="w-1/12 min-w-[70px]"
+        className="w-1/12 min-w-[80px]"
       />
       <Button className="w-1/12" variant="outlined" color="error" onClick={removeItem}>
         {<CloseIcon className="block sm:hidden" />}
