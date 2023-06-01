@@ -5,9 +5,21 @@ import { Button } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-
+import { checkout, openPortal } from "@/utils/stripe";
 const PricingPage = ({ pricing, plan }) => {
-  let { userId } = useAuth();
+  let { userId, isSignedIn } = useAuth();
+  const { push } = useRouter();
+
+  let onCheckout = async (priceId) => {
+    let session = await checkout(priceId, window.location.origin, userId);
+    push(session.url);
+  };
+
+  const onOpenPortal = async () => {
+    let session = await openPortal(window.location, userId);
+    push(session.url);
+  };
+
   return (
     <div className="m-8">
       <div className="my-8">
@@ -15,54 +27,34 @@ const PricingPage = ({ pricing, plan }) => {
         <h3 className="text-center text-slate-500 font-normal">Choose a plan that works best for you</h3>
       </div>
       <div className="flex gap-6 w-fit mx-auto flex-wrap justify-center">
-        <PriceCard data={pricing.tier1} userId={userId} plan={plan} />
-        <PriceCard data={pricing.tier2} userId={userId} plan={plan} />
-        <PriceCard data={pricing.tier3} userId={userId} plan={plan} />
+        <PriceCard data={pricing[0]} userId={userId} plan={plan} isSignedIn={isSignedIn} />
+        <PriceCard
+          data={pricing[1]}
+          plan={plan}
+          isSignedIn={isSignedIn}
+          onCheckout={onCheckout}
+          onOpenPortal={onOpenPortal}
+        />
+        <PriceCard
+          data={pricing[2]}
+          plan={plan}
+          isSignedIn={isSignedIn}
+          onCheckout={onCheckout}
+          onOpenPortal={onOpenPortal}
+        />
       </div>
     </div>
   );
 };
 
-const PriceCard = ({ data, userId, plan }) => {
-  const { push } = useRouter();
-  const checkout = () => {
-    fetch("/api/stripe/checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        priceId: data.priceId,
-        successURL: `${window.location.origin}/tracker`,
-        cancelURL: `${window.location.origin}/pricing`,
-        userId: userId,
-      }),
-    })
-      .then((res) => res.json())
-      .then((session) => {
-        // Redirect to Checkout
-        push(session.url);
-      });
+const PriceCard = ({ data, plan, isSignedIn, onCheckout, onOpenPortal }) => {
+  let onAction = () => {
+    if (plan === "Free") {
+      onCheckout(data.priceId);
+    } else {
+      onOpenPortal();
+    }
   };
-
-  const openPortal = () => {
-    fetch("/api/stripe/portal", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: userId,
-        returnURL: `${window.location}`,
-      }),
-    })
-      .then((res) => res.json())
-      .then((session) => {
-        // Redirect to Checkout
-        push(session.url);
-      });
-  };
-
   return (
     <Card variant="outlined" className="shadow-lg px-5 py-6 relative flex flex-col gap-4 w-[280px]">
       {data.name === "Basic" && <div className="absolute top-0 left-0 w-full h-1 bg-blue-500"></div>}
@@ -86,24 +78,14 @@ const PriceCard = ({ data, userId, plan }) => {
           </>
         )}
       </h2>
-      {data.price === "Free" || !userId ? (
-        <Link href={!userId ? "/sign-up" : ""} passHref className="w-full">
-          <Button
-            className="w-full"
-            variant="contained"
-            color="secondary"
-            disabled={userId !== null || userId !== undefined}
-          >
+      {data.price === "Free" || !isSignedIn ? (
+        <Link href={!isSignedIn ? "/sign-up" : ""} passHref className="w-full">
+          <Button className="w-full" variant="contained" color="secondary" disabled={isSignedIn}>
             {data.action}
           </Button>
         </Link>
       ) : (
-        <Button
-          onClick={plan === "Free" || !plan ? checkout : openPortal}
-          className="w-full"
-          variant="contained"
-          color="secondary"
-        >
+        <Button onClick={onAction} className="w-full" variant="contained" color="secondary">
           {plan === "Free" || !plan ? data.action : "Manage"}
         </Button>
       )}

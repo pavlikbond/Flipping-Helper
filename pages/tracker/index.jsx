@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Tracker } from "src/components/tracker-page";
+import { Tracker } from "src/components/tracker/tracker";
 import { connectMongo } from "utils/connectMongo.js";
-import { User, NewPricing } from "models/schemas.js";
+import { User, Pricing } from "models/schemas.js";
 import Container from "@mui/material/Container";
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { getAuth } from "@clerk/nextjs/server";
 export default function TrackerPage({ mongoUser, items, limit }) {
   return (
     <Container maxWidth="lg" className="my-6">
@@ -18,7 +18,7 @@ export async function getServerSideProps(ctx) {
 
   let mongoUser = await User.findOne({ clerkId: userId });
   let items = await fetch("https://prices.runescape.wiki/api/v1/osrs/mapping").then((response) => response.json());
-  let allPricings = await NewPricing.find({});
+  let allPricings = await Pricing.find({});
 
   //only need name and osrs_id for autocomplete dropdown
   items = items.map((item) => {

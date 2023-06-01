@@ -12,6 +12,7 @@ export function UserProvider({ children }) {
   const [user, setUser] = useState({});
   useEffect(() => {
     if (sessionId) {
+      console.log("getting user");
       fetch(`api/mongo_user?clerkId=${userId}`)
         .then((res) => res.json())
         .then((data) => {

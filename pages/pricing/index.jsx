@@ -1,8 +1,8 @@
 import React from "react";
-import { Pricing, User, NewPricing } from "models/schemas.js";
+import { Pricing, User } from "models/schemas.js";
 import PricingPage from "@/src/components/pricing/page";
 import { connectMongo } from "utils/connectMongo.js";
-import { getAuth, buildClerkProps } from "@clerk/nextjs/server";
+import { getAuth } from "@clerk/nextjs/server";
 const PricesPage = ({ pricing, plan }) => {
   return (
     <div>
@@ -55,7 +55,7 @@ export async function getServerSideProps({ req }) {
   // const newPrice = new Pricing(newPricing);
   // await newPrice.save();
 
-  // NewPricing.insertMany([newPricing.tier1, newPricing.tier2, newPricing.tier3])
+  // Pricing.insertMany([newPricing.tier1, newPricing.tier2, newPricing.tier3])
   //   .then(function () {
   //     console.log("Data inserted"); // Success
   //   })
@@ -63,7 +63,7 @@ export async function getServerSideProps({ req }) {
   //     console.log(error); // Failure
   //   });
 
-  let pricing = await Pricing.findOne({ name: "main" });
+  let pricing = await Pricing.find({});
   return {
     props: { pricing: JSON.parse(JSON.stringify(pricing)), plan: plan },
   };

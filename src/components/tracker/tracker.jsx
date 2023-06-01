@@ -65,7 +65,7 @@ export const Tracker = ({ mongoUser, items, limit }) => {
   return (
     <div className="flex flex-col ">
       <div className="flex flex-col gap-6 mb-8">
-        <Trigger />
+        <Trigger mongoUser={mongoUser} />
         <div className="flex gap-4 h-[50px]">
           <Button className="w-24 flex gap-4" variant={changesMade ? "contained" : "outlined"} onClick={onSave}>
             {waiting && <CircularProgress size={24} />}
@@ -148,7 +148,7 @@ export const ItemCard = ({ item, removeItem, setChangesMade, index }) => {
         variant="outlined"
         onChange={onUpdateThreshold}
         value={threshold}
-        inputProps={{ maxLength: 8 }}
+        inputProps={{ maxLength: 8, type: "tel" }}
         InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
         className="w-1/12 min-w-[80px]"
       />

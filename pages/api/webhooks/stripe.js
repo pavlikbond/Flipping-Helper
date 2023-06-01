@@ -3,7 +3,7 @@ import Stripe from "stripe";
 import { buffer } from "micro";
 import { User, Pricing } from "models/schemas";
 import { connectMongo } from "utils/connectMongo";
-import { log } from "console";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
 });
@@ -54,8 +54,8 @@ export default async function handler(request, response) {
         const customerSubscriptionCreated = event.data.object;
         console.log("customerSubscriptionCreated", customerSubscriptionCreated);
         let priceId = customerSubscriptionCreated.items.data[0].price.id;
-        let pricing = await Pricing.findOne({ name: "main" });
-        let plan = pricing.tier2.priceId === priceId ? "Basic" : pricing.tier3.priceId === priceId ? "Pro" : "Free";
+        let pricings = await Pricing.find({});
+        let plan = pricings.find((pricing) => pricing.priceId === priceId)?.name || "Free";
         await User.findOneAndUpdate({ stripeId: customerSubscriptionCreated.customer }, { plan: plan }).then((user) => {
           console.log("user", user);
         });
@@ -67,8 +67,8 @@ export default async function handler(request, response) {
     case "customer.subscription.deleted":
       try {
         const customerSubscriptionDeleted = event.data.object;
-        console.log("customerSubscriptionUpdated", customerSubscriptionDeleted);
-        let priceId = customerSubscriptionDeleted.items.data[0].price.id;
+        console.log("customerSubscriptionDeleted", customerSubscriptionDeleted);
+        //let priceId = customerSubscriptionDeleted.items.data[0].price.id;
         // let pricing = await Pricing.findOne({ name: "main" });
         // let plan = pricing.tier2.priceId === priceId ? "Basic" : pricing.tier3.priceId === priceId ? "Pro" : "Free";
         await User.findOneAndUpdate({ stripeId: customerSubscriptionDeleted.customer }, { plan: "Free" }).then(
@@ -96,8 +96,8 @@ export default async function handler(request, response) {
         const customerSubscriptionUpdated = event.data.object;
         console.log("customerSubscriptionUpdated", customerSubscriptionUpdated);
         let priceId = customerSubscriptionUpdated.items.data[0].price.id;
-        let pricing = await Pricing.findOne({ name: "main" });
-        let plan = pricing.tier2.priceId === priceId ? "Basic" : pricing.tier3.priceId === priceId ? "Pro" : "Free";
+        let pricings = await Pricing.find({});
+        let plan = pricings.find((pricing) => pricing.priceId === priceId)?.name || "Free";
         await User.findOneAndUpdate({ stripeId: customerSubscriptionUpdated.customer }, { plan: plan }).then((user) => {
           console.log("user", user);
         });

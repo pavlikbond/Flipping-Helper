@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,10 +12,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
-import TollIcon from "@mui/icons-material/Toll";
+//import TollIcon from "@mui/icons-material/Toll";
+import { openPortal } from "@/utils/stripe";
 import { useRouter } from "next/navigation";
 import { useUser } from "src/components/UserContext";
-
+import Image from "next/image";
 const pages = ["home", "pricing", "about", "tracker"];
 
 function ResponsiveAppBar() {
@@ -40,22 +41,9 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
-  const openPortal = () => {
-    fetch("/api/stripe/portal", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId: userId,
-        returnURL: `${window.location}`,
-      }),
-    })
-      .then((res) => res.json())
-      .then((session) => {
-        // Redirect to Checkout
-        push(session.url);
-      });
+  const onOpenPortal = async () => {
+    let session = await openPortal(window.location, userId);
+    push(session.url);
   };
 
   return (
@@ -63,11 +51,12 @@ function ResponsiveAppBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Link href="/" className="items-center mr-12 no-underline hidden md:flex">
-            <TollIcon className="mr-2" />
+            {/* <TollIcon className="mr-2" /> */}
+            <Image src="/logo.png" width={30} height={30} className="mr-2" alt="logo" />
             <p className="uppercase tracking-wider font-bold">FlipScape Pro</p>
           </Link>
 
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box sx={{ flexGrow: 0.5, display: { xs: "flex", md: "none" } }}>
             <IconButton
               size="large"
               aria-label="account of current user"
@@ -123,16 +112,17 @@ function ResponsiveAppBar() {
               )}
               {sessionId && (plan === "Pro" || plan === "Basic") && (
                 <MenuItem onClick={handleCloseNavMenu} className="min-w-[200px]">
-                  <Button variant="outlined" color="secondary" onClick={openPortal}>
+                  <Button variant="outlined" color="secondary" onClick={onOpenPortal}>
                     Manage Subscription
                   </Button>
                 </MenuItem>
               )}
             </Menu>
           </Box>
-          <TollIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} className="mr-2" />
+          {/* <TollIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} className="mr-2" /> */}
+          <Image src="/logo.png" width={25} height={25} className="mr-2 md:hidden" alt="logo" />
           <Typography
-            variant="h5"
+            variant="h6"
             noWrap
             component="a"
             href=""
@@ -167,7 +157,7 @@ function ResponsiveAppBar() {
             {isLoaded && userId && (
               <div className="flex gap-2 items-center mr-4">
                 {sessionId && (plan === "Pro" || plan === "Basic") && (
-                  <Button variant="outlined" color="secondary" onClick={openPortal}>
+                  <Button variant="outlined" color="secondary" onClick={onOpenPortal}>
                     Manage Subscription
                   </Button>
                 )}

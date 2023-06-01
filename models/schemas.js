@@ -67,5 +67,5 @@ const NewPricingSchema = new Schema({
 export const Item = models?.Item || model("Item", ItemSchema);
 //export const user = models.user || model("user", UserSchema);
 export const User = models?.User || model("User", UserSchema);
-export const Pricing = models?.Pricing || model("Pricing", PricingSchema);
-export const NewPricing = models?.NewPricing || model("NewPricing", NewPricingSchema);
+//export const Pricing = models?.Pricing || model("Pricing", PricingSchema);
+export const Pricing = models?.Pricing || model("Pricing", NewPricingSchema);

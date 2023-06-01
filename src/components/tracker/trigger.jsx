@@ -1,36 +1,30 @@
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 
-const Trigger = () => {
-  let [pageLoaded, setPageLoaded] = useState(false);
+const Trigger = ({ mongoUser }) => {
   let { userId } = useAuth();
-  const [checked, setChecked] = useState(true);
+  const [checked, setChecked] = useState(mongoUser.tracking || false);
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
+    fetch("/api/mongo_user", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tracking: event.target.checked, clerkId: userId }),
+    })
+      .then((res) => {})
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  useEffect(() => {
-    if (pageLoaded) {
-      fetch("/api/mongo_user", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ tracking: checked, clerkId: userId }),
-      })
-        .then((res) => {})
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    setPageLoaded(true);
-  }, [checked]);
   return (
     <div className="bg-slate-200 rounded shadow py-2 px-8 w-full md:w-fit border-solid border border-slate-600 flex flex-col justify-center">
-      <h2 className="text-slate-700 text-center">Tracking</h2>
+      <h2 className="text-slate-700 text-center">Email Notifications</h2>
       <div className="flex-gap-2 mx-auto">
         <span className={`${!checked ? "text-slate-600" : "text-slate-400"} font-semibold text-lg`}>Off</span>
         <IOSSwitch
