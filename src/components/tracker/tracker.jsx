@@ -10,13 +10,16 @@ import { createFilterOptions } from "@mui/material/Autocomplete";
 import CloseIcon from "@mui/icons-material/Close";
 import Trigger from "src/components/tracker/trigger";
 import { v4 as uuidv4 } from "uuid";
+import Link from "next/link";
+
 export const Tracker = ({ mongoUser, items, limit }) => {
   let [trackedItems, setTrackedItems] = useState(mongoUser.trackedItems);
   let [waiting, setWaiting] = useState(false);
   let [alerts, setAlerts] = useState([]);
   let [newItem, setNewItem] = useState();
   let [changesMade, setChangesMade] = useState(false);
-
+  let [hideLimitReached, setHideLimitReached] = useState(false);
+  let [error, setError] = useState(false);
   const onSave = () => {
     setWaiting(true);
     setAlerts([]);
@@ -41,8 +44,14 @@ export const Tracker = ({ mongoUser, items, limit }) => {
 
   const addItem = () => {
     setChangesMade(true);
+    let osrs_id = items.find((item) => item.name === newItem)?.osrs_id;
+    if (!osrs_id) {
+      setAlerts([{ severity: "error", message: "Item not found" }]);
+      return;
+    }
     setTrackedItems([
       {
+        uuid: uuidv4(),
         name: newItem,
         threshold: 2.5,
         osrs_id: items.find((item) => item.name === newItem).osrs_id,
@@ -86,20 +95,36 @@ export const Tracker = ({ mongoUser, items, limit }) => {
             );
           })}
         </div>
-        <div className="flex gap-4">
-          <Autocomplete
-            filterOptions={filterOptions}
-            onChange={(e, newValue) => {
-              setNewItem(newValue);
-            }}
-            options={items.map((item) => item.name) || []}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="New Item" />}
-            disabled={trackedItems.length >= limit}
-          />
-          <Button variant="outlined" onClick={addItem} disabled={trackedItems.length >= limit}>
-            Add
-          </Button>
+        <div className="flex flex-col md:flex-row gap-2">
+          <div className="flex gap-4 ">
+            <Autocomplete
+              filterOptions={filterOptions}
+              onChange={(e, newValue) => {
+                setNewItem(newValue);
+              }}
+              options={items.map((item) => item.name) || []}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField {...params} label="New Item" />}
+              disabled={trackedItems.length >= limit}
+            />
+            <Button variant="outlined" onClick={addItem} disabled={trackedItems.length >= limit}>
+              Add
+            </Button>
+          </div>
+          {trackedItems.length >= limit && !hideLimitReached && (
+            <Alert
+              severity="warning"
+              className="shadow"
+              onClose={() => {
+                setHideLimitReached(true);
+              }}
+            >
+              <Link href="/pricing" className="text-blue-600 underline decoration-2 underline-offset-4 ">
+                Upgrade
+              </Link>{" "}
+              to track more items
+            </Alert>
+          )}
         </div>
       </div>
       {trackedItems.map((item, index) => {
