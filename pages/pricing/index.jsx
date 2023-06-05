@@ -1,7 +1,7 @@
 import React from "react";
 import { Pricing, User } from "models/schemas.js";
 import PricingPage from "@/src/components/pricing/page";
-import { connectMongo } from "utils/connectMongo.js";
+import { connectMongo } from "src/utils/connectMongo.js";
 import { getAuth } from "@clerk/nextjs/server";
 const PricesPage = ({ pricing, plan }) => {
   return (

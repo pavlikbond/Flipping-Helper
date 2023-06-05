@@ -1,7 +1,7 @@
 import { Webhook } from "svix";
 import { buffer } from "micro";
 import { User } from "models/schemas.js";
-import { connectMongo } from "utils/connectMongo.js";
+import { connectMongo } from "src/utils/connectMongo.js";
 export const config = {
   api: {
     bodyParser: false,

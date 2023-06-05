@@ -13,7 +13,7 @@ import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
 import { useAuth } from "@clerk/nextjs";
 //import TollIcon from "@mui/icons-material/Toll";
-import { openPortal } from "@/utils/stripe";
+import { openPortal } from "@/src/utils/stripe";
 import { useRouter } from "next/navigation";
 import { useUser } from "src/components/UserContext";
 import Image from "next/image";

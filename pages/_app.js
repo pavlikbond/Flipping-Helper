@@ -9,6 +9,8 @@ import "../styles/globals.css";
 import MainLayout from "../src/components/main-layout";
 import { ClerkProvider } from "@clerk/nextjs";
 import { UserProvider } from "@/src/components/UserContext";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+const queryClient = new QueryClient();
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache({
   key: "css",
@@ -29,7 +31,9 @@ export default function MyApp(props) {
           <CssBaseline />
           <UserProvider>
             <MainLayout>
-              <Component {...pageProps} />
+              <QueryClientProvider client={queryClient}>
+                <Component {...pageProps} />
+              </QueryClientProvider>
             </MainLayout>
           </UserProvider>
         </ThemeProvider>

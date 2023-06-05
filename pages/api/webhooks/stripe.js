@@ -2,7 +2,7 @@ import Stripe from "stripe";
 //grab the email from clerk session
 import { buffer } from "micro";
 import { User, Pricing } from "models/schemas";
-import { connectMongo } from "utils/connectMongo";
+import { connectMongo } from "src/utils/connectMongo";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",

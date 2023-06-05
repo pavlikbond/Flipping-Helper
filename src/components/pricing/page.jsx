@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
-import { checkout, openPortal } from "@/utils/stripe";
+import { checkout, openPortal } from "@/src/utils/stripe";
 const PricingPage = ({ pricing, plan }) => {
   let { userId, isSignedIn } = useAuth();
   const { push } = useRouter();
@@ -27,16 +27,21 @@ const PricingPage = ({ pricing, plan }) => {
         <h3 className="text-center text-slate-500 font-normal">Choose a plan that works best for you</h3>
       </div>
       <div className="flex gap-6 w-fit mx-auto flex-wrap justify-center">
-        <PriceCard data={pricing[0]} userId={userId} plan={plan} isSignedIn={isSignedIn} />
         <PriceCard
-          data={pricing[1]}
+          data={pricing.find((pricing) => pricing.name === "Free")}
+          userId={userId}
+          plan={plan}
+          isSignedIn={isSignedIn}
+        />
+        <PriceCard
+          data={pricing.find((pricing) => pricing.name === "Basic")}
           plan={plan}
           isSignedIn={isSignedIn}
           onCheckout={onCheckout}
           onOpenPortal={onOpenPortal}
         />
         <PriceCard
-          data={pricing[2]}
+          data={pricing.find((pricing) => pricing.name === "Pro")}
           plan={plan}
           isSignedIn={isSignedIn}
           onCheckout={onCheckout}

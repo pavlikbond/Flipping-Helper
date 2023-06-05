@@ -11,36 +11,29 @@ import CloseIcon from "@mui/icons-material/Close";
 import Trigger from "src/components/tracker/trigger";
 import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 export const Tracker = ({ mongoUser, items, limit }) => {
   let [trackedItems, setTrackedItems] = useState(mongoUser.trackedItems);
-  let [waiting, setWaiting] = useState(false);
   let [alerts, setAlerts] = useState([]);
   let [newItem, setNewItem] = useState();
   let [changesMade, setChangesMade] = useState(false);
   let [hideLimitReached, setHideLimitReached] = useState(false);
-  let [error, setError] = useState(false);
-  const onSave = () => {
-    setWaiting(true);
-    setAlerts([]);
-    mongoUser.trackedItems = trackedItems;
-    fetch("/api/update-tracked-items", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userData: mongoUser }),
-    }).then((res) => {
-      setWaiting(false);
+
+  const mutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await axios.put("/api/update-tracked-items", { userData: mongoUser });
+      return data;
+    },
+    onSuccess: () => {
+      setAlerts([{ severity: "success", message: "Update Successful" }]);
       setChangesMade(false);
-      if (res.status === 200) {
-        setAlerts([{ severity: "success", message: "Update Successful" }]);
-      } else {
-        setAlerts([{ severity: "error", message: "Update Failed" }]);
-      }
-      console.log(res);
-    });
-  };
+    },
+    onError: () => {
+      setAlerts([{ severity: "error", message: "Update Failed" }]);
+    },
+  });
 
   const addItem = () => {
     setChangesMade(true);
@@ -76,9 +69,12 @@ export const Tracker = ({ mongoUser, items, limit }) => {
       <div className="flex flex-col gap-6 mb-8">
         <Trigger mongoUser={mongoUser} />
         <div className="flex gap-4 h-[50px]">
-          <Button className="w-24 flex gap-4" variant={changesMade ? "contained" : "outlined"} onClick={onSave}>
-            {waiting && <CircularProgress size={24} />}
-            Save
+          <Button
+            className="w-24 flex gap-4"
+            variant={changesMade ? "contained" : "outlined"}
+            onClick={mutation.mutate}
+          >
+            {mutation.isLoading ? <CircularProgress size={24} /> : "Save"}
           </Button>
           {alerts.map((alert, index) => {
             return (

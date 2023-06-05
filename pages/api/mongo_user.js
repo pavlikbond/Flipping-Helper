@@ -1,6 +1,6 @@
 //not really using this right now. I created a context for this instead
 
-import { connectMongo } from "utils/connectMongo";
+import { connectMongo } from "src/utils/connectMongo";
 import { User } from "models/schemas";
 
 export default async (req, res) => {

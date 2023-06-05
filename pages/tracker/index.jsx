@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Tracker } from "src/components/tracker/tracker";
-import { connectMongo } from "utils/connectMongo.js";
+import { connectMongo } from "src/utils/connectMongo.js";
 import { User, Pricing } from "models/schemas.js";
 import Container from "@mui/material/Container";
 import { getAuth } from "@clerk/nextjs/server";
