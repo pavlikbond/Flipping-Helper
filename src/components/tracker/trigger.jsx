@@ -9,7 +9,7 @@ const Trigger = ({ mongoUser }) => {
 
   const handleChange = (event) => {
     setChecked(event.target.checked);
-    fetch("/api/mongo_user", {
+    fetch("/api/mongo-user", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

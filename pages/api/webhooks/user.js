@@ -72,6 +72,15 @@ async function createUser(userData) {
       plan: "Free",
       tracking: false,
       stripeId: "",
+      settings: {
+        delay: 15,
+        email: {
+          addHighLow: true,
+          addThreshold: false,
+          addLink: false,
+          addProfit: false,
+        },
+      },
     });
     newUser
       .save()

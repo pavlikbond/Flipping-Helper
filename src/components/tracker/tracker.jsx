@@ -13,6 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import Link from "next/link";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 export const Tracker = ({ mongoUser, items, limit }) => {
   let [trackedItems, setTrackedItems] = useState(mongoUser.trackedItems);
@@ -91,6 +92,7 @@ export const Tracker = ({ mongoUser, items, limit }) => {
             );
           })}
         </div>
+
         <div className="flex flex-col md:flex-row gap-2">
           <div className="flex gap-4 ">
             <Autocomplete
@@ -106,6 +108,13 @@ export const Tracker = ({ mongoUser, items, limit }) => {
             <Button variant="outlined" onClick={addItem} disabled={trackedItems.length >= limit}>
               Add
             </Button>
+            {mongoUser.plan !== "Free" && (
+              <Link href="/tracker/settings">
+                <Button variant="contained" className="h-full">
+                  <SettingsIcon className="text-4xl" />
+                </Button>
+              </Link>
+            )}
           </div>
           {trackedItems.length >= limit && !hideLimitReached && (
             <Alert
@@ -125,7 +134,7 @@ export const Tracker = ({ mongoUser, items, limit }) => {
       </div>
       {trackedItems.map((item, index) => {
         return (
-          <div key={uuidv4()}>
+          <div key={item.uuid}>
             <ItemCard
               item={item}
               removeItem={() => {
@@ -159,7 +168,7 @@ export const ItemCard = ({ item, removeItem, setChangesMade, index }) => {
   };
 
   return (
-    <div key={item.osrs_id} className="flex gap-1 md:gap-4 w-full my-3 justify-between">
+    <div className="flex gap-1 md:gap-4 w-full my-3 justify-between">
       <h2 className="w-[180px] md:w-1/3 font-semibold text-sm md:text-lg text-slate-500">
         <span className="text-slate-400 font-normal">{index + 1}.</span> {item.name}
       </h2>

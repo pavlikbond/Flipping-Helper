@@ -20,6 +20,15 @@ const UserSchema = new Schema({
   stripeId: String,
   plan: String,
   tracking: Boolean,
+  settings: {
+    delay: Number,
+    email: {
+      addHighLow: Boolean,
+      addThreshold: Boolean,
+      addLink: Boolean,
+      addProfit: Boolean,
+    },
+  },
 });
 
 const PricingSchema = new Schema({
