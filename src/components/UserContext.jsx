@@ -13,7 +13,7 @@ export function UserProvider({ children }) {
   useEffect(() => {
     if (sessionId) {
       console.log("getting user");
-      fetch(`api/mongo_user?clerkId=${userId}`)
+      fetch(`api/mongo-user?clerkId=${userId}`)
         .then((res) => res.json())
         .then((data) => {
           setUser(data);

@@ -7,8 +7,6 @@ export default authMiddleware({
     "/api/notifier",
     "/",
     "/pricing",
-    "/sign-in",
-    "/sign-up",
     "/about",
     "/api/stripe/checkout-session",
     "/api/stripe/portal",
