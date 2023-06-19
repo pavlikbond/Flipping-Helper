@@ -20,6 +20,7 @@ const UserSchema = new Schema({
   stripeId: String,
   plan: String,
   tracking: Boolean,
+  comboItems: Array,
   settings: {
     delay: Number,
     email: {
@@ -28,37 +29,6 @@ const UserSchema = new Schema({
       addLink: Boolean,
       addProfit: Boolean,
     },
-  },
-});
-
-const PricingSchema = new Schema({
-  name: String,
-  tier1: {
-    name: String,
-    shortDescription: String,
-    price: String,
-    action: String,
-    priceId: String,
-    features: Array,
-    limit: Number,
-  },
-  tier2: {
-    name: String,
-    shortDescription: String,
-    price: String,
-    action: String,
-    priceId: String,
-    features: Array,
-    limit: Number,
-  },
-  tier3: {
-    name: String,
-    shortDescription: String,
-    price: String,
-    action: String,
-    priceId: String,
-    features: Array,
-    limit: Number,
   },
 });
 
@@ -72,9 +42,16 @@ const NewPricingSchema = new Schema({
   limit: Number,
 });
 
+const ComboSchema = new Schema({
+  name: String,
+  parts: Array,
+  product: { name: String, osrs_id: Number },
+});
+
 //export const item = models.item || model("item", ItemSchema);
 export const Item = models?.Item || model("Item", ItemSchema);
 //export const user = models.user || model("user", UserSchema);
 export const User = models?.User || model("User", UserSchema);
 //export const Pricing = models?.Pricing || model("Pricing", PricingSchema);
 export const Pricing = models?.Pricing || model("Pricing", NewPricingSchema);
+export const ItemCombo = models?.ItemCombo || model("ItemCombo", ComboSchema);

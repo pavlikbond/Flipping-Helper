@@ -1,7 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ["images.unsplash.com", "hydeparkwinterwonderland.com", "wembleypark.com"],
+    domains: ["picsum.photos"],
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false };
